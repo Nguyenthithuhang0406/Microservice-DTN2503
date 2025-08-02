@@ -27,11 +27,6 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public AuthenticationConfiguration authenticationConfiguration(){
-        return new AuthenticationConfiguration();
-    }
-
-    @Bean
     public UserDetailsService userDetailsService() {
         return username ->
                 repository.findByUsername(username)
