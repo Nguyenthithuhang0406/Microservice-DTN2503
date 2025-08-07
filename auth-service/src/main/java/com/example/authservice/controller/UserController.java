@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/api/v1/user")
+@RequestMapping(path = "/api/v1/auth/user")
 public class UserController {
     private final UserService userService;
 
@@ -24,5 +24,4 @@ public class UserController {
                 .status(registerResponse.getStatus())
                 .body(registerResponse);
     }
-
 }

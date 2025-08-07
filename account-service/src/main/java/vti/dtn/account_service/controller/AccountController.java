@@ -13,7 +13,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "api/v1/accounts")
+@RequestMapping(value = "/api/v1/accounts")
 public class AccountController {
     private final AccountService accountService;
 

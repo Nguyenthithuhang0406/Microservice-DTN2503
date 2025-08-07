@@ -14,16 +14,31 @@ services:
     networks:
       - spring-microservice
 
-    eureka-server:
-      container_name: eureka-server
-      build:
-        context: ./eureka-server
-        dockerfile: Dockerfile
-      restart: unless-stopped
-      ports:
-        - "8761:8761"
-      networks:
-        - spring-microservice
+  eureka-server:
+    container_name: eureka-server
+    build:
+      context: ./eureka-server
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8761:8761"
+    networks:
+      - spring-microservice
+
+  api-gateway:
+    container_name: api-gateway
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8762:8762"
+    depends_on:
+      - eureka-server
+    networks:
+      - spring-microservice
+    environment:
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eureka-server:8761/eureka/
 
   auth-service:
     container_name: auth-service
@@ -34,6 +49,7 @@ services:
       - "8082:8082"
     depends_on:
       - mysql
+      - eureka-server
     networks:
       - spring-microservice
     environment:
@@ -41,6 +57,7 @@ services:
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
       SPRING_APPLICATION_NAME: auth-service
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eureka-server:8761/eureka/
 
   account-service:
     container_name: account-service
@@ -51,12 +68,14 @@ services:
       - "8081:8081"
     depends_on:
       - mysql
+      - eureka-server
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/microservice?createDatabaseIfNotExist=true&characterEncoding=UTF-8&serverTimeZone=UTC
       #      SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/microservice?createDatabaseIfNotExist=true&characterEncoding=UTF-8&serverTimeZone=UTC
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
       SPRING_APPLICATION_NAME: account-service
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eureka-server:8761/eureka/
     networks:
       - spring-microservice
 
@@ -69,12 +88,14 @@ services:
       - "8080:8080"
     depends_on:
       - mysql
+      - eureka-server
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/microservice?createDatabaseIfNotExist=true&characterEncoding=UTF-8&serverTimeZone=UTC
       #      SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/microservice?createDatabaseIfNotExist=true&characterEncoding=UTF-8&serverTimeZone=UTC
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
       SPRING_APPLICATION_NAME: department-service
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eureka-server:8761/eureka/
     networks:
       - spring-microservice
 
